@@ -7,9 +7,9 @@ public class SoundController : MonoBehaviour
 {
     [SerializeField] private List<Sounds> sounds;
     [SerializeField] private List<Sounds> musics;
+
     public float SoundVolume;
     public float MusicVolume;
-   
 
     private void Awake()
     {
@@ -31,19 +31,22 @@ public class SoundController : MonoBehaviour
         }
         DontDestroyOnLoad(this);
     }
+
     private void Start()
     {
         SoundVolume = PlayerPrefs.GetFloat("soundvolume", 0.5f);
-        MusicVolume = PlayerPrefs.GetFloat("musicvolmue", 0.5f);
-        if(PlayerPrefs.GetInt("SoundOn",1)==1)
+        MusicVolume = PlayerPrefs.GetFloat("musicvolume", 0.5f);
+
+        if (PlayerPrefs.GetInt("SoundOn", 1) == 1)
         {
-            SoundUpdate(false);
+            SoundUpdate(false);// Mute is false
         }
         else
         {
-            SoundUpdate(true);
+            SoundUpdate(true); // Mute is true
         }
-        if (PlayerPrefs.GetInt("MusicOn",1) == 1)
+
+        if (PlayerPrefs.GetInt("MusicOn", 1) == 1)
         {
             MusicUpdate(false);
         }
@@ -51,15 +54,15 @@ public class SoundController : MonoBehaviour
         {
             MusicUpdate(true);
         }
+
     }
-    public void PlaySound(SoundName name, bool loop=false)
+
+    public void PlaySound(SoundName name, bool loop)
     {
         Sounds sound = sounds.Find(x => x.name == name);
-      
-        sound.audio.loop = loop;
         sound.audio.volume = SoundVolume;
+        sound.audio.loop = loop;
         sound?.audio.Play();
-
     }
 
     public void PlayMusic(SoundName name, bool loop = false)
@@ -72,7 +75,6 @@ public class SoundController : MonoBehaviour
         Sounds music = musics.Find(x => x.name == name);
         if (music != null)
         {
-            
             music.audio.priority = 128;
             music.audio.loop = loop;
             music.audio.volume = MusicVolume;
@@ -109,11 +111,12 @@ public class SoundController : MonoBehaviour
     }
     public void MusicVolumeUpdate()
     {
-        for(int i=0;i<musics.Count;i++)
+        for (int i = 0; i < musics.Count; i++)
         {
             musics[i].audio.volume = MusicVolume;
         }
     }
+    
     public void SoundVolumeUpdate()
     {
         for (int i = 0; i < sounds.Count; i++)
@@ -122,6 +125,7 @@ public class SoundController : MonoBehaviour
         }
     }
 
+    
 
     public bool IsSound()
     {
@@ -133,7 +137,7 @@ public class SoundController : MonoBehaviour
         return true;
     }
 
-
+    
 }
 
 [System.Serializable]
@@ -148,14 +152,13 @@ public class Sounds
 
 public enum SoundName
 {
-    Collect,
-    jump,
-    Death,
-    Hurt,
-    LandOnEnemy,
-    LandOnGround,
-    Music,
-    Walk1,
-    Walk2
-
+   Collect,
+   Jump,
+   Hurt,
+   Death,
+   LandOnEnemy,
+   LandOnGround,
+   Music,
+   Walk1,
+   Walk2
 }
