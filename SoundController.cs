@@ -7,6 +7,9 @@ public class SoundController : MonoBehaviour
 {
     [SerializeField] private List<Sounds> sounds;
     [SerializeField] private List<Sounds> musics;
+    public float SoundVolume;
+    public float MusicVolume;
+   
 
     private void Awake()
     {
@@ -26,12 +29,37 @@ public class SoundController : MonoBehaviour
             musics[i].audio.playOnAwake = false;
             musics[i].audio.volume = musics[i].volume;
         }
+        DontDestroyOnLoad(this);
     }
-
-    public void PlaySound(SoundName name)
+    private void Start()
+    {
+        SoundVolume = PlayerPrefs.GetFloat("soundvolume", 0.5f);
+        MusicVolume = PlayerPrefs.GetFloat("musicvolmue", 0.5f);
+        if(PlayerPrefs.GetInt("SoundOn",1)==1)
+        {
+            SoundUpdate(false);
+        }
+        else
+        {
+            SoundUpdate(true);
+        }
+        if (PlayerPrefs.GetInt("MusicOn",1) == 1)
+        {
+            MusicUpdate(false);
+        }
+        else
+        {
+            MusicUpdate(true);
+        }
+    }
+    public void PlaySound(SoundName name, bool loop=false)
     {
         Sounds sound = sounds.Find(x => x.name == name);
+      
+        sound.audio.loop = loop;
+        sound.audio.volume = SoundVolume;
         sound?.audio.Play();
+
     }
 
     public void PlayMusic(SoundName name, bool loop = false)
@@ -47,6 +75,7 @@ public class SoundController : MonoBehaviour
             
             music.audio.priority = 128;
             music.audio.loop = loop;
+            music.audio.volume = MusicVolume;
             music.audio.Play();
         }
     }
@@ -78,6 +107,21 @@ public class SoundController : MonoBehaviour
             musics[i].audio.mute = mute;
         }
     }
+    public void MusicVolumeUpdate()
+    {
+        for(int i=0;i<musics.Count;i++)
+        {
+            musics[i].audio.volume = MusicVolume;
+        }
+    }
+    public void SoundVolumeUpdate()
+    {
+        for (int i = 0; i < sounds.Count; i++)
+        {
+            sounds[i].audio.volume = SoundVolume;
+        }
+    }
+
 
     public bool IsSound()
     {
@@ -104,10 +148,10 @@ public class Sounds
 
 public enum SoundName
 {
-    Collec,
+    Collect,
     jump,
     Death,
-    Heart,
+    Hurt,
     LandOnEnemy,
     LandOnGround,
     Music,
